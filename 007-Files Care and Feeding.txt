@@ -1,0 +1,570 @@
+############################
+6 - Files: Care and Feeding
+############################
+	
+I nomi file sono case sensitive e non si può usare "/" ne "0"
+
+gcc è il compilatore C che considera codici sorgenti i file .c
+
+convmv è un programma che può converitire i nomi dei file tra varie codifiche di caratteri
+
+Conviene far iniziare il nome di un file con una maiuscola, una minuscola o un numero.
+
+I nomi che iniziano col "." vengono considerati nascosti, per vederli ls -a
+
+In linux le directory sono gerarchiche e sono dei file che raggruppano file. Lo / separa file dalle directory e	directory dalle directory.
+La struttura è a forma di albero e alla radice c'è la directory "/" root (radice). root è anche il nome del system admin ma non ha niente a che vedere con la directory root.
+
+
+
+#Nomi percorsi assoluti e relativi	
+Assoluto se è specificato tutto il percorso a partire dalla directory root "/" /home/joe/letter.txt
+Relativo se non è specificato tutto il percorso ma viene omesso il percorso che porta alla directory usata in quel momento ( sei in /home/joe) e il file è letter.txt
+Una shell o un programma sono sempre lanciati da una directory usata in quel momento
+
+Scorciatorie					
+
+..
+è la directory superiore. 
+Esempio: sono in /home/lorenzo/lettere e sto lavorando su lettera1.txt. la cartella /home/lorenzo contiene anche la cartella foto. se voglio andare alla foto 1 da /home/lorenzo/lettere posso scrivere ../foto/foto1
+
+.
+il "." invece si riferisce alla directory corrente. Quindi se devo lavorare su un file presente nella directory dove sono al momento, il percorso relativo è ./<nome del file>
+
+/home/lorenzo
+una volta loggato in una linux ti trovi sempre in /home/numeutente
+
+
+
+	#touch
+touch
+
+per creare un file. Se il nome del file è composto da più parole separate da uno spazio bisogna usare gli "". 
+es touch "Ciao mamma" oppure Ciao\ mamma
+Se il file esiste già, allora viene aggiornato il timestamp.
+										
+\
+il carattere "\" è un carattere di escape che, anteposto al carattere da ignorare, dice alla shell di non interperetare tale carattere come normalmente farebbe.
+
+
+	
+	#cd
+
+change directory
+cd
+
+vai alla directory superiore
+cd ..
+
+vai all'ultima directory visitata					
+cd -
+
+vai alla home
+cd --		
+
+vai alla home						
+cd ~								
+
+“~”
+la tilde sta per /home/numeutente/ e si scrive con la sequenza di caratteri "Alt+126 ~"
+cd ~/lorenzo
+
+
+	
+	#directory stack
+è tipo i preferiti delle cartelle, è uno stack (pila) di directory frequentemente usate che invochi per fare più velocemente. a bocce ferme (quando ti logghi) nello stack è presente solo ~ (la home)
+
+pushd /percorso/delle/cartelle
+ti fa andare alla cartella e mette /percorso/delle/cartelle nel directory stack. a questo punto nello stacke c'è ~ e /percorso/delle/cartelle
+
+dirs
+elenca le cartelle presenti nello stack
+
+pushd +N
+N è il numero posizionale 0 è la prima cartella dello stack. +N porta il numero N alla prima posizione. in posizione 0
+
+popd +N
+rimuove la cartella numero N dallo stack 
+
+i colori dei file
+
+nero	file
+verde	file eseguibile
+blue	directory
+cyano	link
+
+
+	
+	#ls
+ls
+list elenca i file presenti in una directory
+
+ls |less oppure <more>
+concatenando l'output del comando ls con less otteniamo un elenco dei file presenti in una directory pagina per pagina (l'output non è colorato)
+
+opzioni ls
+
+-a or --all 						
+Displays hidden files as well
+
+-i or --inode
+Displays the unique file number (inode number)
+
+-l or --format=long
+Displays extra information
+
+-o or --no-color
+Omits colour-coding the output
+
+-p or -F
+Marks file type by adding a special character
+
+-r or --reverse
+Reverses sort order
+
+-R or --recursive
+Mostra ricorsivamente il contenuto della directory e delle sottodirectory (DOS: DIR/S)
+
+-S or --sort=size
+Sorts files by size (longest first)
+
+-t or --sort=time
+Sorts file by modification time (newest first)
+
+-X or --sort=extension
+Sorts file by extension (“file type”)
+
+-d or --directory
+list directory entries instead of contents, and do not dereference symbolic links
+
+-h
+human
+
+	
+quando lanci ls -a si vedono i file e le directory nascoste. Vediamo anche . e ..
+. è la rappresentazione della directory corrente, 
+.. è la rappresentazione della directoy padre.
+	
+ls .
+ls ..
+	
+
+
+	#mkdir
+
+mkdir <nomecartella>
+crea la cartella
+
+mkdir -p nomecartella/sottocartella
+crea la cartella e la sottocartella (-p = parents)
+
+
+	
+	#rmdir
+
+rmdir <nomecartella>
+rimuove <nomecartella> solo se è vuota
+
+rmdir <nomecartella>/<sottocartella>
+rimuove solo la cartella <sottocartella> solo se è vuota 
+
+rmdir -p <nomecartella>/<sottocartella>
+rimuove tutto il path a partire dall'ultimo livello ma solo se in ogni livello la cartella è vuota
+
+rm -r <nomecartella>/<sottocartella>
+rimuove <sottocartella> e il suo contenuto
+
+rm -r <nomecartella>
+rimuove <nomecartella> e tutto il suo contenuto
+
+rm -rf <nomecartella>
+rimuove <nomecartella> e tutto il suo contenuto senza domande
+
+
+
+	#rm
+
+rm
+rimuove i file. Per cancellare un file bisogna avere i permessi di scrittura per la cartella che contiene i file da cancellare. 
+Di default un utente ha i permessi di scrittura nella sua home
+
+rm*
+rimuove tutti i file non nascosti all'interno della cartella
+
+rm -r *
+rimuove anche le sottocartelle
+
+rm -rf <file o cartella>
+cancella tutto senza chiedere
+
+rm -rf /
+cancella l'intero sistema perciò occhio!
+
+rm -i *
+chiede conferma di ogni file da cancellare
+
+rm -rRi
+
+
+
+	#globbing (utilizzo del wildcard *)
+
+echo /cartella/*.txt
+stampa a monitor tutti i file (* wilcard).txt presenti nella cartella 
+
+* tranne lo /
+sta per tutti i caratteri, 
+
+?
+sta per tutti i valori ma di un solo carattere
+
+ls *.txt
+elenca tutti i file .txt
+
+ls file1.*
+elenca tutti i file con nome file1 con qualsiasi estensione
+
+ls file?.txt
+elenca file1.txt, file2.txt ecc.
+	
+echo prog[123]
+matchano esattamente quei caratteri che sono enumerati all'interno, quindi prog1 prog2 prog3
+
+ls prog[1-9].c
+matcha i file che hanno un nome prog seguito da un numero compreso tra 1 e 9. quindi matcha p1 e p5 ma non p0 e p21.
+
+[A-Z]bracadabra.txt
+matcha i file che iniziano con la maiuscola e che proseguono con bracadabra.txt
+
+prog[A-z]
+matcha i file che hanno un nome prog seguito da tutti i caratteri ASCII compresi tra il carattere A e il carattere z (quindi anche _ per esempio)
+
+prog[A-Za-z].c						
+matcha i file che hanno un nome prog seguito da tutte le lettere maiuscole e minuscole
+
+prog[!A-Za-z].c						
+matcha i file che hanno un nome prog seguito da che non siano lettere
+
+
+In linguistica il termine metafonesi o metafonia o umlaut indica un fenomeno fonologico che consiste nella modificazione del suono di una parola per l'influenza della vocale finale sulla vocale tonica, in un processo di assimilazione.
+p.e. in umbro meridionale il pl. di nero è niri, dove la prima vocale subisce l'effetto della seconda
+
+touch {a,b,c}{1,2,3}.dat
+creerà a1.dat  a2.dat  a3.dat  b1.dat  b2.dat  b3.dat  c1.dat  c2.dat  c3.dat
+
+echo {a,b,c}{2,3}.dat
+stamperà a monitor a2.dat a3.dat b2.dat b3.dat c2.dat c3.dat
+
+mkdir -p revenue/200{8,9}/q{1,2,3,4}
+creerà la caretella revenue, le due sottocartelle 2008 e 2009 e all'interno di entrambe queste due creerà le sottocartelle q1, q2, q3, q4
+
+in alternativa a "ls -R" puoi usare "ls *"		//il carattere * non mostra sui file nascosti (che iniziano con un ".") per ovviare a questa cosa bisogna scrivere ".*" 
+
+
+
+	#cp
+cp file1 file2
+copia il file1 nel file2
+
+opzioni cp
+
+-b (backup)
+Makes backup copies of existing target files by appending a tilde to their names
+
+-f (force)
+Overwrites existing target files without prompting
+
+-i (engl. interactive)
+Asks (once per file) whether existing target files should be overwritten
+
+-p (engl. preserve)
+Tries to preserve all attributes of the source file for the copy
+
+-R (engl. recursive)
+Copies directories with all their content
+
+-u (engl. update)
+Copies only if the source file is newer than the target file (or the target file doesn’t exist)
+
+-v (engl. verbose)
+Displays all activity on screen
+
+cp file1 /cartella/sottocartella
+copia file1 in sottocartella
+
+cp /etc/passwd .
+copia il file /etc/passwd nell'attuale cartella
+
+cp /etc/services ./myservices
+copiare il file /etc/services nella cartella corrente rinominandolo myservices
+
+
+
+	#mv
+mv
+serve per spostare un file o rinominarlo. mv non funziona tra file system diversi. in quel caso bisogna copiare il file
+
+mv file1 file3
+se file3 non esiste, rinomini file1 in file3
+
+mv file1 file3
+se file3 esiste il contenuto di file3 viene sostituito da quello di file1 e file1 viene distrutto
+
+mv file3 /cartella/sottocartella
+sposti file3 all'interno della cartella sottocartella
+
+opzioni mv
+
+-b (backup)
+Makes backup copies of existing target files by appending a tilde to their names
+
+-f (force)
+Overwrites existing target files without prompting
+
+-i (engl. interactive)
+Asks (once per file) whether existing target files should be overwritten
+
+-p (engl. preserve)
+Tries to preserve all attributes of the source file for the copy
+
+-R (engl. recursive)
+Copies directories with all their content
+
+-u (engl. update)
+Copies only if the source file is newer than the target file (or the target file doesn’t exist)
+
+-v (engl. verbose)
+Displays all activity on screen
+
+
+
+	#link
+link
+un link è un altro nome dello stesso file e lo si fa per sicurezza (cancellazione file)
+
+ln file1(originale) file2(derivato)
+assegna un nuovo nome (file2) a file1. 
+ls -i (inode) mostra che l'inode è lo stesso, quindi il file è lo stesso. non vale per le directory. 
+l'inode è univoco all'interno di un file system, quindi i link sono possibili solo all'interno dello stesso file system.
+
+
+	#hard link
+link creato con ln che produce un secondo file identico al primo ma con nome diverso e stesso inode
+	
+la modifica all'originale si ripercuoterà anche sul derivato, e viceversa.
+
+	#symbolic link o soft link
+sono dei file che contengono il nome del file target, sono dei puntatori. i soft link sono permessi con le directory e sono consentiti anche tra file system diversi
+l'inode sarà diverso e il colore sarà ciano. il colore diventa rosso mattone se il symbolic lik punta a niente (il target è stato cancellato)
+
+ln -s file1 file2
+file2 diventa un symbolic link di file1
+
+ln -s /var/log cartellalink
+se scrivi cd cartellalink sarai in /var/log.
+
+la modifica all'originale si ripercuoterà anche sul derivato, e viceversa e su tutti i derivati (link) dell'originale.
+
+pwd -P
+print working directory physical (non mostrarmi i symbolic link)
+
+echo Hello >~/hello
+scrivi Hello dentro un file sotto /home/lorenzo/hello 
+
+
+
+	#more
+more
+mostra un file di testo
+
+
+	
+	#less	
+less
+è come more ma un po' più evoluto
+
+all'interno della pagina:
+
+invio
+per scendere di una riga
+
+spazio
+per scendere di una pagina
+
+b
+per tornare su di una pagina
+
+h
+help
+
+q
+per uscire
+
+Ctrl + l
+ridisegna il monitor
+
+/<parola>+Invio
+cerca la parola (in more non funziona)
+
+v
+invoca vi per more e nano per less
+
+
+
+	#find
+find
+cerca l'argomento in maniera ricorsiva (anche nelle sottodirectory) e stampa a monitor il percorso del risultato.
+
+cerca <a partire dalla cartella indicata> -<il tipo di file> <nomefile>
+
+
+find . -user joe -print
+cerca nella pwd tutti file di joe. -print significa che li stampa a monitor. di default comunque li stampa a monitor
+
+find + globbing
+find . -user "joe*" -print
+
+find ha bisogno di argomenti per compiere il suo task
+
+Starting Directory 
+Test Conditions
+Actions
+
+Logical operators for find
+
+! (Not)
+The following test must not match
+
+-a (And) Both tests to the left and right of -a must match
+-o (Or) At least one of the tests to the left and right of -o must match
+
+
+	#Starting Directory
+è la directory dalla quale find inizia a cercare (da lì le sue sottodirectory)
+
+
+	#Test Conditions
+questi argomenti definiscono i requisiti che deve avere il file da cercare
+
+-name
+Specifies a file name pattern. All shell search pattern characters are allowed. The -iname option ignores case differences.
+
+-type
+Specifies a file type (see Section 10.2). This includes:
+
+b 
+block device file
+
+c
+character device file
+
+d 
+directory
+
+f 
+plain file
+
+l 
+symbolic link
+
+p 
+FIFO (named pipe)
+
+s 
+Unix domain socket
+
+-user
+Specifies a user that the file must belong to. User names as well as numeric UIDs can be given.
+
+-group
+Specifies a group that the file must belong to. As with -user, a numeric GID can be specified as well as a group name.
+
+-size
+Specifies a particular file size. Plain numbers signify 512-byte blocks; bytes or kibibytes can be given by appending c or k, respectively.
+A preceding plus or minus sign stands for a lower or upper limit; 
+
+-size +10k, for example, matches all files bigger than 10 KiB.
+
+-atime
+(engl. access) allows searching for files based on the time of last access (reading or writing). 
+This and the next two tests take their argument in days; …min instead of …time produces 1-minute accuracy.
+
+-mtime
+(engl. modification) selects according to the time of modification.
+
+-ctime
+(engl. change) selects according to the time of the last inode change (including access to content, permission change, renaming, etc.)
+
+-perm
+Specifies a set of permissions that a file must match. The permissions are given as an octal number (see the chmod command). To search for a permission in particular, the octal number must be preceded by a minus sign, 
+
+e.g., -perm -20 matches all files with group write permission, regardless of their other permissions.
+
+-links
+Specifies a reference count value that eligible files must match.
+
+-inum
+Finds links to a file with a given inode number. If multiple tests are given at the same time, they are implicitly ANDed
+
+find /home/lorenzo/ -type d -name foto
+cerca all'interno della Starting Directory (/home/lorenzo) i tipi di file directory che si chiamano foto
+
+find /home/ \( -type d -name "fot*" \) -print
+è un altro modo di cercare le directory ma più elaborato e complesso. lo "\" è il carattere di escape che dice alla shell di ignorare il carattere che lo segue.
+
+find . \( -type d -o -name "A*" \) -print
+è un altro modo di cercare le directory ma più elaborato e complesso. lo "\" è il carattere di escape che dice alla shell di ignorare il carattere che lo segue.
+
+-maxdepth <N>
+numero di slivelli di sottocartelle in cui find deve cercare
+
+
+	#Actions
+-print
+stampa a monitor, è l'azione di default
+
+find . -name "*" -print > list2.txt
+
+-exec
+esegue il comando che lo segue senza chiedere conferma all'utente
+
+-ok
+esegue il comando che lo segue chiedendo conferma all'utente
+
+-exec '{}' \;
+-exec deve terminare con un ";" preceduto da  '{}' \ all'interno del comando sono rimpiazzate dai file trovati da find.
+
+find . -atime +13 -exec rm -i '{}' \;
+trova partendo dall'attuale cartella (ricorsivamente) tutti i file a cui non si è acceduto da più di 14 giorni (-atime +13) e li cancella, chiedendo conferma (-i).
+
+
+	
+	#xargs
+-xargs
+se i file sono tanti exec diventa inefficiente allora si usa xargs.
+
+find ./ -name “*~” | xargs -d “\n” rm
+
+cerca dalla directory corrente in poi tutti i file che finiscono con ~, poi passa l'output al comando xargs che xargs prende ogni valore che gli viene passato e lo usa come argomento del comando rm
+-d \n significa che xargs usa come separatore di ogni valore il carattere \n a capo (xargs di default usa sia lo spazio che a capo come delimitatore)
+
+
+
+	#locate
+
+sudo apt-get install locate
+locate è più veloce e meno esigente di find
+
+locate <nomefile>
+troverà e stamperà tutti i file che contengono la stringa <nomefile>
+
+* ? [...]
+si possono usare * ? e [...]
+
+locate è veloce perchè non guarda nell'albero del file system, guarda invece in un database
+
+sudo updatedb
+è il comando per creare o aggiornare il db che userà locate
+
+slocate
+locate circoscritto solo ai file appartenenti all'utente che lancia il comando
