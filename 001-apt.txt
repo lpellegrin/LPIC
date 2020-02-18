@@ -1,0 +1,47 @@
+#apt
+
+gli indirizzi delle repositories sono sotto
+/etc/apt/sources.list
+				
+sudo apt-get update				
+	Aggiorna la lista dei pacchetti disponibili dai repository. 
+	Va lanciato dopo aver apportato delle modifiche a /etc/apt/sources.list, /etc/sources.list o /etc/apt/preferences. 
+	Può essere eseguito periodicamente per verificare che la propria lista di pacchetti sia aggiornata.
+				
+sudo apt-get upgrade
+	Scarica e installa gli aggiornamenti per tutti i pacchetti installati. Non sarà rimosso alcun pacchetto installato: 
+	se un aggiornamento di un pacchetto richiede la rimozione di un altro pacchetto, l'aggiornamento non sarà effettuato.
+
+apt-get dist-upgrade
+	Aggiorna tutti i pacchetti presenti anche se sono necessarie nuove dipendenze. 
+	Delega APT a svolgere tutti i compiti necessari all'aggiornamento dell'intera distribuzione; se necessario anche l'eventuale rimozione di pacchetti installati.
+
+apt full-upgrade
+	Esegue le stesse funzioni di apt upgrade, ma rimuove i pacchetti attualmente installati se richiesto per aggiornare il sistema.				
+
+sudo apt-get install <pacchetto>		
+	per installare il package
+				
+sudo apt-get install xrdp 			
+	per potersi connettere in remote desktop su una ubuntu
+	
+sudo apt-get remove <pacchetto>	
+	rimuove il pacchetto installato, ma non le configurazioni e nenanche le dipendenze.
+
+sudo apt-get autoremove
+	rimuove il pacchetto e anche le dipendenze
+	
+sudo apt-get purge <pacchetto>
+	rimuove il pacchetto E le configurazioni.
+
+sudo apt-cache search keyword
+	cerca pacchetti relativi alla parola chiave immessa
+	
+lsb_release -a
+	per sapere la release di ubuntu
+
+sudo dpkg-reconfigure tzdata
+	ti appare una utility per settare il timezone
+				
+/var/www/html/index.html			
+	è la pagina di default di un server apache

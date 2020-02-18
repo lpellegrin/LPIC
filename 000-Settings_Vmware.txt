@@ -1,0 +1,17 @@
+? come si configura correttamente il network vmware?
+
+
+
+per permettere alla vmvare guest di andare su internet:
+	
+1) bisogna settare la scheda di rete fisica dell'host (del pc) con la quale ci si collega a internet in modo che condivida la connessione
+
+centri di rete --> selezioni la int --> proprietà --> condivisione e consenti selezionando la vVMnet che è configurata NAT su VMWareworkstation. 
+Verrà usata una rete speciale: 192.168.137.0/24
+
+2) Nella VmWare Workstation andare su Edit --> Virtual Network Editor e vedere se c'è una rete NAT e come si chiama. 
+Se non c'è bisogna crearla dicendo che è di tipo NAT e dando il piano di indirizzamento della scheda di rete dell'host.
+
+3) si da un IP al guest e si setta la sua interfaccia custom: Specific virtual network scegliendo la VMnet (NAT)
+
+Fare attenzione se i servizi di Windows relativi al NAT di vmWare sono attivi e se la scheda di rete dell'host ha la condivisione.  

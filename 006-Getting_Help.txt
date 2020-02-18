@@ -1,0 +1,57 @@
+type
+#type <comando> ti dice se il comando è interno o esterno. se è esterno ti dice sotto che cartella è.
+
+
+which
+#è simile a type (cerca in PATH) con la differenza che non sa se un comando è interno o esterno. which ti darà il percorso anche se un comando è interno.
+
+
+#help								
+#help "comando" ti elenca le opzioni disponibili del comando
+	
+
+help <comando interno>
+#da più dettagli sul comando
+
+
+<comando esterno> --help
+#spiega la sintassi e i parametri di un comando
+
+<comando esterno> -h
+#spiega la sintassi e i parametri di un comando
+
+<comando esterno> -?
+#spiega la sintassi e i parametri di un comando
+
+
+whatis
+#spiega sinteticamente un comando
+
+
+man
+#man [comando]
+#è la man page del comando (manuale)
+
+man -k <comando>
+#Elenca in quante pagine man figura l'argomento e stampa a monitor la parte NAME della relativa manpage.
+
+#apropos
+apropos <comando>. 
+#è identico a man -k <comando>
+#Elenca in quante pagine man figura l'argomento e stampa a monitor la parte NAME della relativa manpage.
+	
+groff
+programma che permette di stampare le man page
+
+/usr/share/man/man[n]
+dove risiedono le man page [n] sta per numero del capitolo
+
+panpath
+è la variabile d'ambiente che include le directory dove man va a cercare le pagine quando si invoca il comando man
+
+info
+info [command]
+è come man ma le pagine sono formattate in maniera diversa
+
+/usr/share/doc
+è una cartella che contiene info sui comandi

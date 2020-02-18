@@ -1,0 +1,20 @@
+Open Source Software non significa gratis. 
+Significa che hai accesso al codice. 
+quindi puoi modificarlo. 
+Possono darti dei biscotti gratis o a pagamento. La differenza è se ti danno anche la ricetta.
+
+Linux è il kernel.
+i sistemi operativi Linux completi si chiamano distribuzioni.
+
+Tra loro cambiano sopratutto i metodi per l'installazione dei pacchetti
+
+Debian
+RedHat
+Suse
+CentOS
+Ubuntu
+
+RedHat --> CentOS
+Debian --> Ubuntu
+
+CentOS è la RedHat gratis. 

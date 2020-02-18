@@ -1,0 +1,35 @@
+login
+#ti logghi
+
+logout
+#esci - termina solo la shell di login
+
+exit
+#esci - termina qualsiasi shell
+
+passwd
+#cambi la password dell'utente corrente
+
+pwd
+#print (o present) work directory - vedi in quale cartella sei in quel momento
+
+shutdown -h now
+#per spegnere la macchina
+	
+shutdown -r now
+#per riavviare la macchina
+
+vi
+#editor per editare testo
+
+:%s/FindMe/ReplaceME/g
+#find and replace con vi
+
+nano, pico, emacs
+#	altri editor testuali
+
+clear
+#pulisce lo schermo
+	
+ALT+X (nano)
+#per nascondere o far ricomparire l'help

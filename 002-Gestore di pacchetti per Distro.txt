@@ -1,0 +1,8 @@
+
+Mandriva	Urpmi
+Debian Ubuntu	APT
+OpenSuse	Yast/Smart
+Fedora		Yum
+Slackware	Swaret
+Gentoo		emerge
+Red Hat 	Yum

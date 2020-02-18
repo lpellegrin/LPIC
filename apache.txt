@@ -1,0 +1,349 @@
+#############################
+#		Apache	    #
+#############################
+
+
+
+
+#Apache Web Server Installation and Setup
+
+				RedHat/CentOS		Debian/Ubuntu
+
+	Package Name		httpd			apache2
+
+	Config Location		/etc/httpd/		/etc/apache2/
+
+
+
+
+	lorenzo@Web2:/etc/apache2$ ls -la
+	total 88
+	drwxr-xr-x  8 root root  4096 feb 25 20:51 .
+	drwxr-xr-x 90 root root  4096 feb 25 20:51 ..
+	-rw-r--r--  1 root root  7115 mar 19  2016 apache2.conf
+	drwxr-xr-x  2 root root  4096 feb 25 20:51 conf-available
+	drwxr-xr-x  2 root root  4096 feb 25 20:51 conf-enabled
+	-rw-r--r--  1 root root  1782 mar 19  2016 envvars
+	-rw-r--r--  1 root root 31063 mar 19  2016 magic
+	drwxr-xr-x  2 root root 12288 feb 25 20:51 mods-available
+	drwxr-xr-x  2 root root  4096 feb 25 20:51 mods-enabled
+	-rw-r--r--  1 root root   320 mar 19  2016 ports.conf
+	drwxr-xr-x  2 root root  4096 feb 25 20:51 sites-available
+	drwxr-xr-x  2 root root  4096 feb 25 20:51 sites-enabled
+
+
+	/etc/apache2 (Debian/Ubuntu) ha al suo interno i riferimenti a due cartelle: sites-enabled e mods-enabled. 
+	Queste due cartelle contengono i symbolic link di file che in realtà stanno nelle cartelle:
+	sites-available e mods-available. 
+
+	La ragione è perchè se voglio disabilitare ma non cancellare un contenuto, cancello il symbolic link e non il file.
+
+	lorenzo@Web2:/etc/apache2/sites-enabled$ ls -la
+	total 8
+	drwxr-xr-x 2 root root 4096 feb 25 20:51 .
+	drwxr-xr-x 8 root root 4096 feb 25 20:51 ..
+	lrwxrwxrwx 1 root root   35 feb 25 20:51 000-default.conf -> ../sites-available/000-default.conf
+	
+	000-default.conf è fatto così:
+	
+	<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+	</VirtualHost>
+
+
+
+
+	/etc/httpd/httpd.conf (RedHat/CentOS) ha al suo interno i riferimenti alla cartella conf.d che contiene i file reali. 
+
+
+	sudo apt-get install apache2				//installi il pacchetto in Ubuntu
+	
+	Per abilitare un sito definito in availables lanciare il comando:
+	
+	sudo a2ensite nomeFile.conf
+	
+	e poi 
+	
+	service apache2 reload
+
+
+#Apache Modules & Languages
+
+	Se si vuole usare PHP , MYSQL , PERL o altri c'è un modulo dedicato per ogni linguaggio. 
+	
+	HTML --> Apache
+	
+	PHP --> Apache PHP mod --> HMTL --> Apache
+	
+	sudo apt-get install libapache2-mod-php		//installi il modulo php
+	
+	e poi i file .php messi in /var/www/hmtl/ verranno gestiti da apache.
+	
+#MPM
+
+	Multi-process Modules 
+	Per gestire più richieste client allo stesso tempo. E lo fa in diversi modi
+
+	
+	Prefork (tanta RAM) istanziando più processi figli uno per ogni client
+	Worker	(threads meno RAM) istanziando più processi figli, che hanno molti thread (uno per ogni client)
+	Event	(gestisce tipi differenti di connessioni in modo differente)
+	
+	
+	
+	:/etc/apache2/mods-available ls
+	
+	-rw-r--r-- 1 root root   107 mar 19  2016 mpm_worker.load
+	-rw-r--r-- 1 root root   836 mar 19  2016 mpm_worker.conf
+	-rw-r--r-- 1 root root   108 mar 19  2016 mpm_prefork.load
+	-rw-r--r-- 1 root root   571 mar 19  2016 mpm_prefork.conf
+	-rw-r--r-- 1 root root   106 mar 19  2016 mpm_event.load
+	-rw-r--r-- 1 root root   668 mar 19  2016 mpm_event.conf
+	
+	
+	
+	lorenzo@Web2:/etc/apache2/mods-enabled$ ls -latr
+
+	lrwxrwxrwx 1 root root   34 feb 25 21:55 mpm_prefork.conf -> ../mods-available/mpm_prefork.conf
+	lrwxrwxrwx 1 root root   34 feb 25 21:55 mpm_prefork.load -> ../mods-available/mpm_prefork.load
+	
+	di default è abilitato il prefork (un child per ogni client)
+	
+	lorenzo@Web2:/etc/apache2/mods-enabled$ less mpm_prefork.conf
+
+	<IfModule mpm_prefork_module>
+        StartServers                    5			//apache inizia con 5 child 
+        MinSpareServers           		5			//5 stanno in idle pronti per servire la richiesta
+		MaxSpareServers          		10			//al massimo 10 ne vengono istanziati
+        MaxRequestWorkers         		150			//La direttiva MaxRequestPerChild indica il numero di richieste HTTP che un processo lanciato da Apache può gestire prima di essere terminato e sostituito da un processo fresco.
+													Non è consigliabile utilizzare un valore infinito (0).E’ buona norma utilizzare invece un valore alto ma finito per evitare perdite di memoria.
+													Utilizzare un valore troppo basso implica la rigenerazione continua dei processi, molto onerosa in termini di memoria.
+        MaxConnectionsPerChild   		0
+	</IfModule>
+
+	
+#Apache Authentication and Redirection
+
+
+	Diciamo ad Apache che una particolare cartella web è accessibile solo previa autenticazione.
+	
+	www.esempio.it/secret
+	
+	/etc/apache2/
+	
+	apache2.conf è il file che apache legge. qui dentro ci sono le configurazioni. 
+	per esempio deve leggere tutti i file .conf contenuti in site-enabled(che continiene i sym link dei file reali contenuti in sites-available).
+
+	dentro questi file c'è per esempio: 000-default.conf
+	
+		<VirtualHost *:80>
+			# The ServerName directive sets the request scheme, hostname and port that
+			# the server uses to identify itself. This is used when creating
+			# redirection URLs. In the context of virtual hosts, the ServerName
+			# specifies what hostname must appear in the request's Host: header to
+			# match this virtual host. For the default virtual host (this file) this
+			# value is not decisive as it is used as a last resort host regardless.
+			# However, you must set it for any further virtual host explicitly.
+			#ServerName www.example.com
+
+			ServerAdmin webmaster@localhost
+			DocumentRoot /var/www/html
+
+			# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+			# error, crit, alert, emerg.
+			# It is also possible to configure the loglevel for particular
+			# modules, e.g.
+			#LogLevel info ssl:warn
+
+			ErrorLog ${APACHE_LOG_DIR}/error.log
+			CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+			# For most configuration files from conf-available/, which are
+			# enabled or disabled at a global level, it is possible to
+			# include a line for only one particular virtual host. For example the
+			# following line enables the CGI configuration for this host only
+			# after it has been globally disabled with "a2disconf".
+			#Include conf-available/serve-cgi-bin.conf
+		</VirtualHost>
+		
+	questo file dice dove sono i contenuti html DocumentRoot 
+	
+	sotto DocumentRoot aggiungiamo una direttiva che dice ad Apache quale cartella proteggere con password /secret
+	
+	<Directory /var/www/html/secret>
+
+		AuthType Basic							//autentication basic
+		AuthName "poker"						//Non viene mostrato a monitor, ed è un metodo statico.
+		AuthUserFile /etc/apache2/pokerpass		//Dove è il file delle password 
+		Require valid-user						//entra solo chi ha una coppia valida user password
+
+	</Directory>
+	
+	ora dobbiamo creare il file delle password
+	
+	sudo apt-get install apache2-utils
+	
+	sudo htpasswd -c /etc/apache2/pokerpass poker		//-c crea, per l'utente poker
+	
+	inserisci la password e il gioco è fatto.
+	
+	
+	c'è una direttiva che redirige il traffico da una cartella ad un'altra.
+
+	Redirect /dallacartella 	/allacartella
+	
+	e si può mettere sotto DocumentRoot
+
+	
+#Virtual Host
+	
+	per nome (un solo IP, tanti nomi)
+	per IP (tanti IP)
+	
+	puoi mischiare le due modalità
+	
+	
+	di default da default
+	
+	sotto /etc/apache2/sites-available/000-default.conf
+	
+	<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        Redirect /secret /nongiocare/ueue.html
+
+        <Directory /var/www/html/secret>
+
+         AuthType Basic
+         AuthName "poker"
+         AuthUserFile /etc/apache2/pokerpass
+         Require valid-user
+
+        </Directory>
+
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+	</VirtualHost>
+
+	<VirtualHost *:80> questo virtual host risponde per tutti gli IP se non specificati 
+	
+	se vogliamo che apache usi il modo per IP dobbiamo creare un nuovo file /etc/apache2/sites-available/000-default.conf cambiandone il nome e dobbiamo inserire l'ip qui <VirtualHost *:80> 
+	
+	se vogliamo che apache risponda per nome dobbiamo creare un nuovo file /etc/apache2/sites-available/000-default.conf cambiandone il nome, lasciamo <VirtualHost *:80>  invariato e modifichiamo la direttiva 
+	
+	#ServerName www.example.com
+	
+	a questo punto dobbiamo abilitare i siti col comando 
+	
+	sudo a2ensite <nomefile> senza il .conf
+	
+	e poi restarti apache
+	
+	
+	
+#Apache SSL setup
+	
+	creiamo la chiave privata e la chiave pubblica
+	
+		openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+		
+		req -x509: indica quale certificato (CSR) utilizzare, in questo caso si usa lo standard X.509;
+		nodes: dice a OpenSSL di non usare una password per il certificato;
+		days 365: imposta la scadenza in giorni del certificato;
+		newkey rsa:2048: indica la lunghezza della chiave del certificato;
+		keyout: indica dove salvare la chiave privata;
+		out: indica dove salvare il certificato;
+		
+	Verranno ora richiesti i dati del certificato ( la parte più importante è la Common Name dove si deve mettere il nome host o l’ip con cui si raggiunge il webserver ):
+
+		Country Name (2 letter code) [AU]:IT
+		State or Province Name (full name) [Some-State]:Lazio
+		Locality Name (eg, city) []:Roma
+		Organization Name (eg, company) [Internet Widgits Pty Ltd]:Blablabla S.p.a.
+		Organizational Unit Name (eg, section) []:Reparto varie ed eventuali
+		Common Name (e.g. server FQDN or YOUR name) []:nome-host-o-indirizzo-ip
+		Email Address []:blabla@blablabla.bla
+	
+	
+	
+	Il modulo ssl fornisce al server Apache la capacità di criptare la comunicazione con il client. 
+	Quando questo tipo di comunicazione criptata è attivo, l'URL del sito che si sta visitando è preceduto dal prefisso https://. Per utilizzare questa estensione è sufficiente:
+
+	Abilitare il modulo digitando in una finestra di terminale, il comando:
+
+		sudo a2enmod ssl
+
+	Con l'installazione base di Apache viene fornito un sito, chiamato default-ssl, utilizzabile come base di partenza per la configurazione del proprio sito protetto con SSL. 
+	Come configurazione di partenza, questo sito utilizza una chiave ed un certificato generati automaticamente dal pacchetto ssl-cert.
+
+	Abilitare il sito default-ssl con il comando
+
+		sudo a2ensite default-ssl
+
+	Modificare le direttive
+
+		SSLCertificateFile;
+		SSLCertificateKeyFile;
+		
+	#e anche 
+		
+		#ServerName nome-host-o-indirizzo-ip (provato ma sembra non servire a niente)
+
+	#in modo che puntino alle directory dove sono collocati i file relativi al certificato e alla chiave del vostro sito;
+
+	Riavviare il server Apache con il comando
+
+		sudo service apache2 restart
+
+apt-get install php libapache2-mod-php
+	

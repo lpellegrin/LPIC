@@ -1,0 +1,122 @@
+Una shell è un'interprete dei comandi
+
+bash
+	Bourne-again shell è la shell realizzata dal progetto GNU costruita dalla Bourne shell inventata da Bourne negli anni 70 per interfacciarsi col kernel.
+	La bash fonde la Bourne shell, la C shell e la Korn shell.
+	Il comando "bash" apre un'altra shell.
+	La shell è case sensitive
+
+# per sapere che shell sto usando
+echo $0
+
+	
+# per vedere quali shell sono disponibili
+cat /etc/shells
+
+	
+# per accorciare la lunghezza del prompt
+# per cambiarla solo per l'istanza corrente
+PS1='\u:\W\$ '  
+
+# Per cambiarlo "permanentemente"
+# Nel tuo ~/.bashrc, trova la seguente sezione:
+
+ if ["$ color_Prompt" = yes]; quindi 
+ PS1 = '$ {debian_chroot: + ($ debian_chroot)}\[\ 033 [01; 32m \]\u @\h\[\ 033 [00m \]:\[\ 033 [01; 34m \]\w\[\ 033 [00m \]\$ '
+ Else 
+ PS1 =' $ {debian_chroot: + ($ debian_chroot)}\u @\h:\w\$ '
+ fi 
+Rimuovi @\h e sostituisci \w con un maiuscolo \W, in modo che diventi:
+
+ if ["$ color_Prompt" = yes]; quindi 
+ PS1 = '$ {debian_chroot: + ($ debian_chroot)}\[\ 033 [01; 32m \]\u\[\ 033 [00m \]:\[\ 033 [01; 34m \]\W\[\ 033 [00m \]\$ '
+ Else 
+ PS1 =' $ {debian_chroot: + ($ debian_chroot)}\u:\W\$ '
+ fi 
+#Salvare, uscire, chiudere il terminale e avviarne un altro per vedere il risultato.
+
+# <comando> <opzione> <argomento>
+# opzione e argomento sono i parametri del comando
+
+#opzioni
+parametri che iniziano col "-". possono essere accomunati "-l -a -t -r = -latr". le opzioni lunghe (per es. --version) si scrivono con "--" e non possono essere accomunate
+
+#argomenti
+Solitamente sono nomi di file che il comando deve processare.
+
+#Command
+#“What to do?”
+
+#Options
+#“How to do it?”
+	
+#Arguments
+#“What to do it with?”
+
+
+#comandi interni
+#sono già presenti nella shell (exit, cd, ecc)
+
+#comandi esterni
+#la shell non esegue tali comandi ma lancia dei file eseguibili che solitamente sono nel file system sotto la cartella /bin o /usr/bin.
+
+
+#type
+#type <comando> ti dice se il comando è interno o esterno. se è esterno ti dice sotto che cartella è.
+
+	
+#which
+#è simile a type (cerca in PATH) con la differenza che non sa se un comando è interno o esterno. which ti darà il percorso anche se un comando è interno.
+
+
+#echo	
+echo
+#stampa a monitor o in un file i suoi parametri
+
+	
+echo Hello    There
+#Stampa Hello There (rimuovendo tutti gli spazi tra i due argomenti.)
+	
+echo "Hello    There"
+#se l'argomento è tra virgolette, allora gli spazi e i tab vengono considerati come caratteri dell'argomento.
+
+
+";"
+Permette di lanciare più comandi e l'output di ogni comando inizierà su una nuova linea.
+echo Hello; echo There
+#Stampa
+		Hello
+		There
+
+
+#Stampa a monitor la data corrente
+date
+
+
+#setti il localtime
+cp /usr/share/zoneinfo/America/La_Paz /etc/localtime
+	
+#exec
+exec <comando>
+lancia il programma al posto della shell. quando il programma ha finito, non si ritorna alla shell, ma viene terminata anche la shell. 
+
+
+#time
+time <comando>
+dice quanto tempo impiega un comando dal suo lancio alla sua completa esecuzione
+
+real    0m2.267s
+#tempo totale dell'esecuzione
+
+user    0m0.314s
+#tempo impiegato dalla CPU in user mode (processi utente)
+
+sys     0m0.450s
+#tempo impiegato dalla CPU in kernel mode (processi di sistema)
+				
+set
+#mostra la varietà delle opzioni relative alle operazione bash
+
+ldd /directory/comando
+#ti dice quali librerie condivise di cui il comando ha bisogno. per sapere il percorso esteso del comando usare il comando type.
+	
