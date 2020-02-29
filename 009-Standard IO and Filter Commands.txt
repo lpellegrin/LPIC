@@ -1,0 +1,581 @@
+#####################################	
+8 - Standard I/O and Filter Commands
+#####################################
+
+“standard channels”
+
+“standard input”
+the keyboard
+
+“standard output”
+the console screen or a terminal program in a graphical desktop environment. 
+
+“standard error output”
+takes any error messages (e. g., about a non-existent input file or a syntax error in the regular expression).
+	
+vediamo come prendere uno standard input da un file o scrivere uno standard output in un file
+	
+	
+Channel 		Name 				Abbreviation 		Device 		Use
+0 			standard input 			stdin 			keyboard 	Input for programs
+1 			standard output 		stdout 			screen 		Output of programs
+2 			standard error output 		stderr 			screen 		Programs’ error messages
+
+	
+less -f /dev/tty
+digitando e premendo invio vedi quello che hai inserito dalla tastiera e quello che viene stampato a monitor
+
+
+	#Modificare lo standard output
+	
+“>”
+redirige lo standard output in un file
+	
+ls -laF >filelist
+redirige la lista dei file della pwd nel file filelist (tale file se non c'è, viene creato; se c'è, viene sovrascritto)
+	
+">>"
+redirige il contenuto nel file senza sovrascrivere quest'ultimo (lo aggiunge, append)
+
+comando &> file
+È anche possibile redirezionare sia stdout che stderr verso uno stesso file utilizzando l’operatore &> (o equivalentemente >&)
+
+comando >file 2>&1
+Lo stesso effetto si ottiene redirezionando i due stream in sequenza. 
+L’output stream viene redirezionato verso file e successivamente stderr viene redirezionato verso l’output stream, cioè file. 
+Dato che i comandi vengono valutati sequenzialmente l’ordine in cui si specificano i redirect è significativo
+
+comando &> /dev/null
+Quando un comando è troppo verboso, non si è interessati al suo output o lo si vuole nascondere all’utente, è possibile redirezionare stdout o stderr (o entrambi) verso lo speciale nodo /dev/null, il cui contenuto viene sempre scartato dal sistema.
+	
+`…`
+è un altro modo per redirigere l'output - command substitution lo standard output del comando tra `…` viene inserito nell'output dell'altro comando
+
+grep `date +%d/%m` dates
+`date +%d/%m` produce come output la data odierna che non viene stampata a monitor, ma viene usata come argomento di grep per cercare nel file dates 
+
+“`date`”  “$(date)”
+
+
+	#Modificare lo standard input
+	
+"<"
+legge da un file e non dalla tastiera
+	
+
+#Word count
+wc
+statistiche di un file, quante linee, quante parole, ecc
+
+wc -c
+conta le parole
+
+wc -w <frog.txt
+conta le parole presenti nel file frog.txt (funziona anche senza <)
+
+wc -l
+conta le linee di un file
+	
+non c'è << che legge da più file
+
+quindi si usa "cat"
+
+ls -latr >ls.txt
+fai un ls della directory e l'output lo redirigi non a monitor ma in un file chiamato ls.txt
+
+less ls.txt
+vedi il contenuto del file ls.txt
+
+ls -latr >ls.txt >/dev/null
+fai un ls della directory e l'output lo redirigi al nulla, in pratica di sbarazzi del contenuto del file
+
+less ls.txt
+il file c'è ancora ma è vuoto.
+	
+sudo mv ls.txt /dev/null
+così invece cancelli proprio il file. sudo perchè in /dev/null non ci possono scrivere gli utenti normali
+
+
+
+	#Comandi per combinare file
+
+cat
+
+join
+
+paste
+
+
+#cat
+cat
+cat - concatena file e stampa il loro contenuto sullo standard output
+	
+cat file1 file2 file3 | wc -w
+concatena i tre file e esegue wc di tutti e tre
+	
+la redirezione input e output possono essere usate simultaneamente
+	
+wc -w <frog.txt >wordcount
+conta le parole dal file frog.txt e scrivi l'output nel file wordcount
+		
+standard error output
+se si verifica un errore durante lo svolgimento di un programma, il messaggio corrispondente verrà scritto su quel canale
+se si vuole redirigere lo standard error output in un file devi dire il canale da usare, mandatorio per stderr 2>
+										
+stdin (0<)
+lo 0 si può omettere 
+
+stdout (1>)
+l'1 si può omettere
+
+stderr (2>)
+il 2 si deve mettere, quindi 2>
+
+
+#make	
+make >make.log
+a questo comando "make" manca l'argomento, quindi produrrà un errore. l'errore viene gestito dallo standard error output (2>) e non dallo standard output (1>) quindi il file make.log risulterà vuoto
+										
+make >make.log 2>&1
+ridirige lo standard output e lo standard error output del comando "make" nel file make.log		
+
+echo Error >&2
+redirect standard output to standard error output
+	
+	|
+pipe, concatena i comandi
+
+
+#cut	
+cut
+remove sections from each line of files
+	
+cut -c2-4 file.txt
+mostrerà solo le colonne dalla 2 alla 4 del file.txt
+
+cut -c2,4 file.txt
+mostrerà solo le colonne 2 e 4 del file.txt
+
+cut -c2- file.txt
+mostrerà solo le colonne dalla 2 fino alla fine della riga del file.txt
+	
+-d,
+delimiter=DELIM use DELIM instead of TAB for field delimiter
+
+-f,
+--fields=LIST select only these fields;  also print any line that contains no delimiter character, unless the -s option is specified
+
+cut -d" " -f2 file.txt
+userà come delimitatore lo spazio e poi prenderà solo il campo 2 (f sta per field) di ogni linea
+	
+cut -d" " -f2 file.txt | cut -c2
+prendi la seconda colonna del secondo campo
+	
+cut -d: -f1 /etc/passwd | sort | pr -2 >userlst		
+prende il file /etc/passwd, usa come delimitatore i ":", prende il primo campo (field 1), 
+ordina le linee in ordine alfabetico, converte il file per la stampa e ridirige l'output nel file userlist in due colonne
+
+ifconfig eth0 | grep HWaddr | cut -d “ “ -f 11
+ifconfig eth0, poi greppa la riga dove c'è HWaddr, seleziona usando il delimitatore spazio il campo 11 (contato a cazzo)
+	
+
+#pr		
+pr
+converte file di testo per la stampa
+
+
+#tee	
+tee
+il comando tee copia il data stream e invia una copia al file desiderato e una copia allo standard output
+
+ls -laF | tee list
+fa ls e lo stampa a monitor e anche in nel file list
+
+
+#head	
+head
+mostra solo le prime 10 linee di un testo
+	
+head -n 2 file.txt
+mostra solo le prime 2 linee del file
+	
+
+#tail	
+tail
+mostra solo le ultime 10 linee di un testo
+	
+tail -n 2 file
+mostra solo le ultime due linee del file
+	
+head -n 20
+mostra le prime 20 linee di un testo
+	
+-b
+byte (mostrami solo i byte selezionati)
+	
+head -n -20
+mostra tutto il testo tranne le ultime 20 linee. tail non ha questa opzione
+	
+tail -f
+mostra le ultime righe di un file e anche quelle che si aggiungono al file che si sta leggendo (per esempio un file di log che aumenta sempre il suo contenuto)
+	
+head -n 13 fileditesto | tail -n 1
+mostra solo la tredicesima riga
+	
+tail -n +(numero)
+mostra il file a partire dal numero di linea specificato nell'argomento
+
+
+#sort	
+sort
+ordina linee di file di testo
+	
+sort
+di default ordina in base alla prima lettera in ordine alfabetico.
+modificando le variabili d'ambiente, si può settare sort per ordinare in base all'alfabeto di una lingua.
+	
+										
+sort -k 2
+ordina in base al secondo field, usando lo spazio come separatore
+	
+sort -k 2,3
+inizia dal secondo field e in caso di parità considera solo il terzo field
+	
+sort -br -k 2.2 participants.dat
+ordina in base alla seconda lettera del secondo campo. -b significa ignora gli spazi bianchi all'interno del campo
+	
+-t:
+dichiari il separatore, in questo caso :
+	
+sort -t: -k 1.2 participants.dat
+	
+sort +1 -3
+è il modo vecchio, 0 è la prima colonna, 1 è la seconda. +1 significa inizia dalla seconda, -3 significa non considerare la quarta. 
+	
+
+#locale
+I Locale sono utilizzati in linux per definire la lingua che l'utente utilizza
+	
+locale -a
+ti mostra le lingue disponibili
+	
+locale-gen it_IT.UTF-8
+per generare un nuovo locale per la lingua italiana
+	
+LANG=en_US.utf8
+settare la lingua solo per la sessione corrente
+	
+export LANG=en_US.utf8
+cambiarla in modo permanente
+	
+/etc/default/locale					//???????  modificando il file, modifichi la lingua????
+	
+unset LANG LC_ALL LC_COLLATE
+resetti le variabili d'ambiente "LANG" "LC_ALL" "LC_COLLATE"
+	
+export LANG=en_US.utf8
+specifichi le regole di ordinamento secondo la lingua inglese
+
+
+#env	
+env
+per vedere le variabili d'ambiente
+	
+	
+#uniq	
+uniq <nomeFile>
+omette le linee duplicate in un file. 
+puoi specificare un file di input e un file di output. 
+se vengono omessi tali file, vengono usati lo standard input e lo standard output.
+	
+#fmt
+fmt
+riformatta il testo
+
+fmt -w 25 file.txt
+riformatta il testo con la lunghezza massima delle linee di 25 colonne (caratteri)
+non spezza le parole, quindi se un parola dovesse essere spezzata tale parola viene messa nella riga sottostante.
+
+
+#nl	
+nl file.txt
+numera le linee
+
+#pr
+pr file.txt
+prepara un file per la stampa (linee lunghe 80 caratteri, data e ora su ogni pagina, numero di pagina, eventuale header e footer).
+	
+
+#cut
+cut
+Il comando “cut” prende una fetta verticale di un file, stampa solo le colonne o i campi specificati. 
+Le colonne sono selezionate utilizzando il IFS standard o un delimitatore di campi specificato.
+										
+colonne assolute: ogni carattere è considerato una colonna 
+	
+-c (character) colonna
+
+cut -c 1-7 participants.dat
+stampa a monitor solo le colonne dall'1 al 7 del file partecipants
+	
+cut -c 1-7 participants.dat>7colonne.txt |sort 7colonne.txt>7colonneordinate.txt
+	
+cut -c 12,1-5 participants.dat
+stampa le colonne 1,2,3,4,5,12
+	
+colonne relative (fields)
+hai bisogno di delimitatori
+	
+-d delimiter
+-f fields
+	
+cut -d: -f 1,4 participants.dat
+usa come delimitatore : e stampa il primo campo e il quarto
+	
+cut -d: --output-delimiter=': ' -f 1,4 participants.dat
+come prima ma usi un ": " per delimitare l'output
+	
+-s
+non stampa le linee che non contengono il carattere di delimitazione
+
+
+#join
+join
+il comando join unisce il contenuto di due file solo se c'è un campo in comune. tale campo viene usato una sola volta nel risultato
+
+
+cat foodtypes.txt
+1 Protein
+2 Carbohydrate
+3 Fat
+
+cat foods.txt
+1 Cheese 
+2 Potato
+3 Butter
+
+join foodtypes.txt foods.txt
+il campo che combacia è il primo (l'elenco numerato) e poi vengono uniti i restanti campi nell'ordine con cui sono stati inseriti i file come argomenti del comando
+
+1 Protein Cheese
+2 Carbohydrate Potato
+3 Fat Butter
+
+
+
+
+
+join di righe di file con campi combacianti ma in posizioni diverse
+
+in questo esempio usiamo il secondo campo (2) del file wine.txt (-1) e il primo campo (1) del file reviews.txt (-2)
+
+		
+cat wine.txt
+
+Red Beaunes France
+White Reisling Germany
+Red Riocha Spain
+
+
+cat reviews.txt
+
+Beaunes Great!
+Reisling Terrible!
+Riocha Meh
+
+
+join -1 2 -2 1 wine.txt reviews.txt
+
+Beaunes Red France Great!
+Reisling White Germany Terrible!
+Riocha Red Spain Meh
+
+
+conviene riordinarli prima con il comando sort
+
+join -1 2 -2 1 <(sort -k 2 wine.txt) <(sort reviews.txt)
+		
+Beaunes Red France Great!
+Reisling White Germany Terrible!
+Riocha Red Spain Meh
+
+
+si può anche specificare un carattere separatore 
+
+cat names.csv
+		
+1,John Smith,London
+2,Arthur Dent, Newcastle
+3,Sophie Smith,London
+
+cat transactions.csv
+
+£1234,Deposit,John Smith
+£4534,Withdrawal,Arthur Dent
+£4675,Deposit,Sophie Smith
+		
+
+Using the -t option the comma can set as the delimiter.
+
+join -1 2 -2 3 -t , names.csv transactions.csv
+
+John Smith,1,London,£1234,Deposit
+Arthur Dent,2, Newcastle,£4534,Withdrawal
+Sophie Smith,3,London,£4675,Deposit
+
+
+è possibile specificare anche l'ordine di formattazione del risultato
+
+	
+John Smith,1,London,£1234,Deposit
+
+
+To specify the order the list of fields are passed to -o. For this example this is -o 1.1,1.2,1.3,2.2,2.1. This formats the output in the order desired.
+
+join -1 2 -2 3 -t , -o 1.1,1.2,1.3,2.2,2.1 names.csv transactions.csv  (1.1 = primo file.campo 1, e così via)
+
+1,John Smith,London,Deposit,£1234
+2,Arthur Dent, Newcastle,Withdrawal,£4534
+3,Sophie Smith,London,Deposit,£4675
+
+
+
+
+#paste	
+paste
+unisce la prima linea di un file e la prima linea di un secondo e le stampa a monitor separate da un TAB
+
+paste -d: number.dat - >p-number.dat
+	
+cut -f 1-4 participants.dat>number.dat
+	
+cut -d: -f 5 participants.dat>tempclassification
+
+paste -d: tempclassification number.dat >classification.txt
+	
+-s
+l'opzione -s permette di lavorare su più file che contengono liste. ogni linea del primo file diventa una colonna, e così per il secondo file
+	
+es.
+lista 1
+asd
+sdf
+dfg
+		
+		
+lista 2
+qwe
+wer
+ert
+		
+paste lista1 lista2
+
+asd     qwe
+sdf     wer
+dfg     ert
+		
+	
+paste -s lista*
+	
+asd sdf dfg
+qwe wer ert
+
+
+#expand
+expand
+converte i tab in spazi
+
+expand myfile.txt
+
+di default un tab son 8 caratteri di spazio
+
+expand --tabs=10 myfile.txt > myfile2.txt
+ma puoi settare quanto vuoi il numero di spazi 
+
+
+#unexpand
+unexpand
+converte gli spazi in tab
+
+
+#od
+od
+mostra il contenuto di un file in base 8
+
+$ od listing1.2.txt
+0000000 032465 026465 031462 033471 072440 066156 071551 062564
+0000020 005144 032465 026465 030465 033061 066040 071551 062564
+0000040 005144 032465 026465 034467 034462 066040 071551 062564
+0000060 005144 032465 026465 034071 030467 072440 066156 071551
+0000100 062564 005144
+	
+la prima colonna è l'indice (la seconda colonna è 20 cioè parte dal byte 20), i restanti sono i dati visualizzati byte per byte
+
+
+#split
+split
+permette di dividere un file in files più piccoli
+
+$ split -l 2 listing1.1.txt numbers
+The result is two files, numbersaa and numbersab, that together hold the original contents of listing1.1.txt.
+	
+opzioni
+
+The -b size or --bytes=size
+
+-C=size or --line-bytes=size
+dimensioni della linea
+
+-l lines or --lines=lines
+crea i nuovi file che avranno un numero di linee specificate dall'opzione
+
+split permette di dividere un file tar in porzioni più piccole ricomponibili in un secondo momento con cat.
+
+
+#tr
+tr
+cambia caratteri singoli. la sorgente è lo standard input (la tastiera) o un file (usando tr < file)
+	
+tr [options] SET1 [SET2]
+
+cat listingi.txt
+555-2397 Beckett, Barry
+555-5116 Carter, Gertrude
+555-7929 Jones, Theresa
+555-9871 Orwell, Samuel
+
+
+tr BCJ bc < listing1.1.txt
+555-2397 beckett, barry
+555-5116 carter, Gertrude
+555-7929 cones, Theresa
+555-9871 Orwell, Samuel	
+
+la lettera "B" è stata sostituita con la lettera "b", la lettera "C" è stata sostituita con la lettera "c", la letteara "J" non ha un carattere di sostituzione quindi tr usa l'ultimo comando del [SET2] ovvero "c"
+
+
+#diff
+diff
+permette di indicare quali righe sono cambiate da un file all’altro e salvare il tutto su un file.
+
+diff -u filevecchio filenuovo > filediff.patch
+crea un file .patch che contiene il file vecchio + le differenze col file nuovo
+
+
+#patch
+patch
+applichi ad un certo file le differenze ottenute con il metodo "diff"
+
+patch filevecchio < filediff.patch
+Patches can be undone, or reversed, with the '-R' option:
+	
+	
+#rename 
+
+rename 's/trova/sostituisci/' filesdaricercare
+ 
+rename 's/-small//' laos-flag-small.png
+	 
+rename 's/-small//' *.png
+	
+for file in *; do mv "${file}" "${file^}"; done	//prima lettera diventa maiuscola

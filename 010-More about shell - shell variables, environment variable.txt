@@ -1,0 +1,302 @@
+#########################		
+9 - More About The Shell
+#########################	
+
+#sleep
+sleep <numero di secondi>
+sleep non fa niente per il numero di secondi specificato nell'argomento
+	
+
+#echo
+echo
+l'abbiamo già visto, stampa a monitor o in un file i suoi argomenti. può printare anche variabili
+	
+p=Planet
+dai il valore "Planet" alla variabile shell p
+
+echo $p
+per vedere il valore della variabile
+
+echo Hello $p
+stampi Hello Planet
+
+echo -n (argomento)
+non stampa il carattere di a capo alla fine dell'argomento stampato
+		
+export TZ=Asia/Tokyo
+per settare il time zone di Tokyo
+
+/usr/share/zoneinfo
+trovi timezone validi
+
+date MMDDhhmm
+per settare la data a mano (solo root può farlo)
+
+sudo dpkg-reconfigure tzdata
+ti appare una utility per settare il timezone
+	
+	
+	VARIABILI SHELL 
+		
+Le variabili shell sono visibili solo nella shell dove sono state definite.
+
+Nome_variabile=Valore
+setti la variabile shell
+
+#set	
+set
+mostra e gestisce le variabili shell
+
+set | less
+
+set | grep -n nomevariabile=	
+vedi a che linea sta la variabile
+
+set | less >> set.txt
+
+less -N set.txt
+
+
+#unset
+unset
+cancella variabili shell e variabili d'ambiente
+
+Variabili shell importanti
+
+Variable 					Meaning
+
+PWD 						Name of the current directory
+EDITOR 						Name of the user’s favourite editor
+PS1 						Shell command prompt template
+UID 						Current user’s user name
+HOME 						Current user’s home directory
+PATH 						List of directories containing executable programs that are eligible as external commands
+LOGNAME 					Current user’s user name (again)
+
+
+	
+	VARIABILI D'AMBIENTE
+	
+Le variabili d’ambiente sono invece particolari variabili che permettono ad ogni utente di configurare il proprio ambiente di lavoro, sono inoltre passate ai processi figli (siano essi programmi o altre shell).
+Tutte le variabili d'ambiente sono anche variabili shell, ma non è vero il contrario.
+
+p=Planet
+dai il vaore "Planet" alla variabile shell p
+
+export p
+faccio diventare la variabile shell p una variabile d'ambiente
+
+export p=Planet
+definisco allo stesso momento una variabile d'ambiente che è anche variabile shell
+
+export -n foo
+con l'opzione -n foo resta solo una variabile shell
+
+env
+Il comando consente di eseguire un altro programma in un ambiente personalizzato senza modificare quello corrente. 
+Se utilizzato senza un argomento, stamperà un elenco delle variabili di ambiente correnti.
+
+export
+mostra, definisce e gestisce le variabili d'ambiente
+	
+export NOME_VARIABILE=valore
+Per settare una nuova variabile d’ambiente (“temporanea”, vedere più avanti per la spiegazione)
+
+echo $NOME_VARIABILE
+Per visualizzare il valore di una variabile d’ambiente
+
+unset NOME_VARIABILE
+Per cancellare una variabile d’ambiente
+	
+
+	Le variabili d’ambiente possono essere suddivise in 3 categorie: 
+	
+temporanee, 
+	
+locali (per un singolo utente), 
+	
+globali (per tutti gli utenti). 
+
+
+
+	Temporanee
+	
+Una variabile definita semplicemente all’interno della sessione di una shell avrà una durata limitata all’esecuzione della shell stessa.
+La variabile verrà eliminata nel momento in cui la sessione della shell verrà chiusa (logout, exit, riavvio del sistema, …).
+
+#per settarla 
+export p=Planet		
+
+#per vederla
+echo $p
+printenv p
+
+#per cancellarla 
+unset p
+
+
+	Locali
+
+Un altra categoria è quella delle variabili d’ambiente locali, ossia relative ad un singolo utente. Queste possono essere definite in:
+
+~/.bash_profile – file è eseguito una volta al login
+~/.bashrc – file eseguito eseguito alla creazione di una nuova shell. 
+La maggior parte delle variabili dovrebbe essere posta al suo interno.
+
+creo uno script <script>.sh che contiene export p=Planet 
+
+e metto questo script all'interno di /etc/profile.d/
+
+lo scope di queste variabili vale solo per i programmi che hanno una shell
+
+
+	Globali
+
+Infine ci sono le variabili globali definite in modo simile alle precedenti:
+/etc/profile – file letto una volta al login;
+/etc/bash.bashrc – file letto ogni volta che viene avviata una nuova shell.
+
+Per rendere persistenti le variabili di ambiente è necessario definire tali variabili nei file di configurazione di bash. 
+Nella maggior parte delle distribuzioni Linux quando si avvia una nuova sessione, le variabili di ambiente vengono lette dai seguenti file:
+
+/etc/environment
+Utilizzare questo file per impostare le variabili di ambiente a livello di sistema. 
+Le variabili in questo file sono impostate nel seguente formato:
+
+FOO=valore
+VAR_TEST="Valore uno"
+
+
+
+/etc/profile
+Le variabili impostate in questo file vengono caricate ogni volta che viene inserita una shell di accesso bash. 
+Quando si dichiarano le variabili di ambiente in questo file è necessario utilizzare il comando export:
+
+export JAVA_HOME="/path/to/java/home"
+export PATH=$PATH:$JAVA_HOME/bin
+
+
+
+
+
+	
+	
+	
+	
+bash
+con questo comando apro un'altra shell
+	
+env foo=bar bash
+setto la variabile d'ambiente locale foo (che è anche una variabile shell) col valore bar nella nuova shell. 
+tale variabile avrà valore solo nella shell figlia e non nella shell padre
+
+La shell distinugue tra comandi interni e comandi esterni. i comandi esterni sono dei comandi eseguibili che la shell cerca nelle directory elencate nella variabile d'ambiente PATH.
+	
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+$PATH è una variabile speciale che dice alla shell dove guardare per uno specifico comando.
+	
+in queste directory ci sono i programmi esterni (invocati con i comandi), e le variabili d'ambiente
+
+la shell cerca il comando esterno in tutte le directory elencate in PATH a partire da quella più a sinistra. una volta che ha trovato il comando ferma la ricerca e indica dove l'ha trovato.
+
+------------------------------------------------------------
+
+Aggiungere una directory alla variabile PATH
+
+	Solo per la sessione corrente
+
+Se si vuole aggiungere, per esempio, /home/user/mio_prog alla variabile PATH, nella shell digita:
+
+export PATH=$PATH:/home/user/mio_prog 
+per avere la directory alla fine in PATH.
+
+export PATH=/home/user/mio_prog/:$PATH 
+per avere la directory all'inizio in PATH. 
+
+Ora è possibile usare il programma digitando solo il suo nome.
+
+Se si sconnette la sessione, la variabile PATH riprende il suo valore di default, quindi /home/user/mes_prog non esiste più in PATH.
+
+		Permanente
+
+Se si vuole configurare PATH in modo permanente, si deve modificare il file di configurazione della shell di connessione. 
+Visto che di solito è la shell BASH che è usata, si deve modificare il file /home/user/.bashrc.
+
+Per ciò, è possibile utilizzare un editor di testo, o semplicemente un comando per facilitarsi il compito. 
+
+Ecco il comando:
+
+echo 'export PATH=$PATH:/home/user/mio_prog' >> /home/user/.bashrc 
+
+così ad ogni connessione la PATH contiene la directory /home/user/prog. Questa operazione può essere eseguita da utente user visto che si tratta del suo ambiente. 
+
+Rimuovere un percorso aggiunto editando il file /home/lorenzo/.bashrc
+
+Per alcuni path bisogna editare il file /etc/environment
+
+------------------------------------------------------------
+
+lorenzo@ubuntu:~$ type tcpdump
+tcpdump is /usr/sbin/tcpdump
+
+se il comando viene lanciato, la shell poi si "ricorda" la posizione del comando facendo un hash
+
+lorenzo@ubuntu:~$ tcpdump
+tcpdump: no suitable device found
+	
+lorenzo@ubuntu:~$ type tcpdump
+tcpdump is hashed (/usr/sbin/tcpdump)
+
+
+#hash
+hash
+vedi cosa la shell ha hashato e quante volte tale comando è stato invocato
+
+hash -r
+svuoti l'elenco dei comandi hashati	
+	
+which
+è simile a type (cerca in PATH) con la differenza che non sa se un comando è interno o esterno. which ti darà il percorso anche se un comando è interno.
+ma se un comando è interno, non viene eseguito il programma che risiede nelle directory. quindi conviene usare type.
+
+whereis
+whereis è simile a type e which, con l'aggiunta che oltre a dirti dove è il programma, ti dice anche dove è il file output, e dove sono le pagine di documentazione.
+
+
+#history
+history
+è la cronologia dei comandi usati
+~/.bash_history
+è il file dove viene scritta la history. (resiste al reboot ed è disponibile al nuovo login)
+
+history -c && history -w
+per cancellare definitivamente la history
+
+
+
+Ctrl + R
+è la reverse search: digiti le lettere del comando e la shell te le suggerisce/autocompleta
+
+echo Today is; date
+Today is
+Sun Dec 11 20:27:54 CET 2016
+
+comando1 && comando2
+il separatore && tra due comandi permette di eseguire il secondo comando solo se il primo ha dato esito positivo
+
+bash -c comando
+passa il comando alla shell figlia	
+
+comando1 || comando2
+il separatore || tra due comandi permette di eseguire il secondo comando solo se il primo non ha dato esito positivo	
+
+fare uno script bash 
+
+crei il file con itestazione #!/bin/bash
+
+chmod +x file1
+rendi eseguibile il file1	
+
+scrivi i comandi nello script

@@ -1,0 +1,151 @@
+
+
+########################	
+7 - Regular Expressions
+########################
+
+a
+matcha a
+
+[a-e]
+matcha a, b, c, d, e
+
+a[xy]b
+matcha axb e ayb
+
+[A-Za-z]
+matches tutte le maiuscole e le minuscole
+
+[^abc]
+matches tutti i caratteri tranne “a”, “b”, and “c”. (In the shell, that was “[!abc]”.) 
+	
+“.”
+corrisponde al "?" nei shell search patterns, matcherà un sigolo carattere arbitrario (eccezione per il carattere new line “\n”)
+
+“a.c”
+matches “abc”, “a/c” e così via
+
+^
+Inizio della linea
+
+$
+L'ultima occorrenza alla fine della linea
+
+A regular expression starting with a caret (“^”) matches only at the beginning of a line, and a regular expression finishing with a dollar sign (“$”) matches line end only at the end. 
+The newline character at the end of each line is ignored, so you can use “xyz$” to select all lines ending in “xyz”, instead of having to write “xyz\n$”.
+
+	
+".atto"
+trova ogni stringa di cinque caratteri come gatto, matto o patto
+
+"[gm]atto"
+trova gatto e matto
+
+"[^p]atto"
+trova tutte le combinazioni dell'espressione ".atto" tranne patto
+
+"^[gm]atto"
+trova gatto e matto ma solo all'inizio di una riga
+
+"[gm]atto$"
+trova gatto e matto ma solo alla fine di una riga 
+	
+[A-Z]
+lettere maiuscole
+
+[a-z]
+lettere minuscole
+
+[A-Za-z]
+lettera sia maiuscole che minuscole
+
+[A-Za-z0-9]
+numeri e lettere maiuscole e minuscole
+
+[0-9]
+numeri
+
+[0-9A-Fa-f]
+numeri in formato esadecimale
+	
+[!\-"#$%&'()*+,.\/:;<=>?@[\]\^_`{|}~\\]
+segni di interpunzione
+	
+[ \t]
+spazio o TAB
+
+[ \t\n\r\f\v]
+caratteri vuoti
+
+[\x00-\x1F\x7F]
+caratteri control
+
+[^ \t\n\r\f\v]
+caratteri non vuoti
+
+[^\t\n\r\f\v]
+caratteri non vuoti e spazi
+	
+?		zero o 1		abc?		//ab, abc
+
+* 		zero o più 		abc*		//ab,abc,abcc,abccc,abcccc,… etc
+
++		uno o più 		abc+		//abc,abcc,abccc,abcccc,…etc
+
+{n} 	solo n volte 	abc{2} 		//abcc
+
+{n,m} 	da n a m volte 	abc{2,3} 	//abcc,abccc
+	
+	
+	
+#grep	
+grep
+le regular expression le puoi usare facilmente con grep
+
+fgrep
+(“fixed”) non permette l'uso di regular expression, ma solo del set di caratteri. é molto veloce.
+
+egrep
+(“extended”) consente l'uso delle regular expression ma è un po' più lento e consuma più memoria.
+	
+opzioni
+-c (count)
+Outputs just the number of matching lines
+
+-i (ignore)
+Uppercase and lowercase letters are equivalent
+
+-l (list)
+Outputs just the names of matching files, no actual matches
+
+-n (number)
+Includes line numbers of matching lines in the output
+
+-r (recursive)
+Searches files in subdirectories as well
+
+-v (invert)
+Outputs only lines that do not match the regular expression
+
+-f (“file”)
+the search pattern can be read from a file
+	
+grep "stringa da cercare nel contenuto" dove
+	
+grep frog frog.txt
+trova la parola "frog" nel file frog.txt
+	
+grep frog$
+trova l'ultima occorrenza di frog sulla linea
+	
+grep \<frog\> frog.txt
+trova esattamente la parola "frog" e non già bullforg
+	
+grep ^frog frog.txt
+trova le occorenze in cui frog è all'inizio della riga
+	
+egrep "\<king('s daughter)?\>" frog.txt
+trova tutte le linne che contengono le parole “king” or “king’s daughter”
+	
+grep :/bin/bash$ /etc/passwd
+trova tutti gli user che usano la shell bash al loro login
